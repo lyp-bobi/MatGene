@@ -1,0 +1,3 @@
+https://materials.springer.com/periodictable
+
+https://materials.springer.com/search?searchTerm=Phase+Diagram&pageNumber=1&autoRedirectTextSearch=false&datasourceFacet=sm_isp&substanceId=
