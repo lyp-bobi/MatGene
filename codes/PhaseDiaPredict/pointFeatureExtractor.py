@@ -31,7 +31,7 @@ def checkAround(simg,i,j):
 def getContext(simg,i,j):
     radius = 10
     if simg.shape[0]<=i+radius or simg.shape[1]<=j+radius or i<=radius or j<=radius:
-        return [False,False,False,False,False,False,False,False]
+        return (False,False,False,False,False,False,False,False)
     cut1 = math.floor(radius/3.0)
     cut2 = math.ceil(radius*2.0/3.0)
     part = simg[i - radius:i + radius, j - radius:j + radius]
@@ -44,7 +44,7 @@ def getContext(simg,i,j):
     ne = part[0, cut2:radius - 1].tolist() + part[0:cut1, radius - 1].tolist()
     sw = part[cut2:radius - 1, 0].tolist() + part[radius - 1, 0:cut1].tolist()
     se = part[radius - 1, cut2:radius - 1].tolist() + part[cut2:radius - 1, radius - 1].tolist()
-    context=[n.count(0)>0,ne.count(0)>0,e.count(0)>0,se.count(0)>0,s.count(0)>0,sw.count(0)>0,w.count(0)>0,nw.count(0)>0]
+    context=(n.count(0)>0,ne.count(0)>0,e.count(0)>0,se.count(0)>0,s.count(0)>0,sw.count(0)>0,w.count(0)>0,nw.count(0)>0)
 
     return context
 
@@ -105,16 +105,11 @@ for id in range(datanum):
     # print(max)
     ret, corner = cv2.threshold(harris, 0.1*max, 1, cv2.THRESH_BINARY)
     # print(corner.shape)
-    feature = []
+    feature = set()
     for i in range(len(shape)):
         for j in range(len(shape[0])):
             if (corner[i, j] == 1):
-                feature += [getContext(shape, i, j)]
-    distinct_feature=[]
-    for id in feature:
-        if id not in distinct_feature:
-            distinct_feature.append(id)
-    feature=distinct_feature
+                feature.add(getContext(shape, i, j))
     print(len(feature))
     plt.imshow(corner),plt.show()
     # np.savetxt("./corner.csv",corner, delimiter=',')
