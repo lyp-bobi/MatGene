@@ -6,11 +6,12 @@ import math
 
 import numpy as np
 
+
 #this function is used to remove the characters from gray picture
 def checkAround(simg,i,j):
     radius = 10
-    if simg.shape[0]<i+radius or simg.shape[1]<j+radius or i<radius or j<radius:
-        return True
+    if simg.shape[0]<=i+radius or simg.shape[1]<=j+radius or i<=radius or j<=radius:
+        return False
     part = simg[i-radius:i+radius,j-radius:j+radius].flatten().tolist()
     flag1 = 0
     flag2 = 0
@@ -25,25 +26,27 @@ def checkAround(simg,i,j):
         return True
     else:
         return False
-    return False
 
 #get the around
 def getContext(simg,i,j):
     radius = 10
+    if simg.shape[0]<=i+radius or simg.shape[1]<=j+radius or i<=radius or j<=radius:
+        return [False,False,False,False,False,False,False,False]
+    cut1 = math.floor(radius/3.0)
+    cut2 = math.ceil(radius*2.0/3.0)
     part = simg[i - radius:i + radius, j - radius:j + radius]
-    cut1 = max(0,math.floor(radius/3.0)-1)
-    cut2 = max(0,math.ceil(radius*2.0/3.0)-1)
-    n=part[0,cut1:cut2].tolist()
-    s=part[-1,cut1:cut2].tolist()
-    w=part[cut1:cut2,0].tolist()
-    e=part[0,cut1:cut2].tolist()
-    nw=part[0,0:cut1].tolist()+part[0:cut1,0].tolist()
-    ne=part[0,cut2:radius-1].tolist()+part[0:cut1,radius-1].tolist()
-    sw=part[cut2:radius-1,0].tolist()+part[radius-1,0:cut1].tolist()
-    se=part[radius-1,cut2:radius-1].tolist() + part[cut2:radius-1,radius-1].tolist()
-    print(n)
-    print(nw)
+    # print(i,j,part.shape)
+    n = part[0, cut1:cut2].tolist()
+    s = part[-1, cut1:cut2].tolist()
+    w = part[cut1:cut2, 0].tolist()
+    e = part[0, cut1:cut2].tolist()
+    nw = part[0, 0:cut1].tolist() + part[0:cut1, 0].tolist()
+    ne = part[0, cut2:radius - 1].tolist() + part[0:cut1, radius - 1].tolist()
+    sw = part[cut2:radius - 1, 0].tolist() + part[radius - 1, 0:cut1].tolist()
+    se = part[radius - 1, cut2:radius - 1].tolist() + part[cut2:radius - 1, radius - 1].tolist()
+    context=[n.count(0)>0,ne.count(0)>0,e.count(0)>0,se.count(0)>0,s.count(0)>0,sw.count(0)>0,w.count(0)>0,nw.count(0)>0]
 
+    return context
 
 
 list = os.listdir("./diagrams")
@@ -85,7 +88,7 @@ for id in range(datanum):
     # print(shape)
     plt.imshow(shape),plt.title("shape1"),plt.show()
     # np.savetxt("./shape.csv", shape, delimiter=',')
-    print(shape)
+    # print(shape)
     for i in range(len(shape)):
         for j in range(len(shape[0])):
             if(shape[i][j]==0):
@@ -93,16 +96,25 @@ for id in range(datanum):
                     # print(i,j)
                     shape[i][j]=255
 
-    print(shape)
+    # print(shape)
 
     plt.imshow(shape),plt.title("shape2"),plt.show()
     np.savetxt("./shape.csv",shape, delimiter=',')
-    # getContext(shape,500,500)
     harris=cv2.cornerHarris(shape, 5, 11, 0.04)
     max = harris.max()
     # print(max)
-    ret, corner = cv2.threshold(harris, 0.2*max, 1, cv2.THRESH_BINARY)
-    # print(corner)
-    # print(corner.max())
+    ret, corner = cv2.threshold(harris, 0.1*max, 1, cv2.THRESH_BINARY)
+    # print(corner.shape)
+    feature = []
+    for i in range(len(shape)):
+        for j in range(len(shape[0])):
+            if (corner[i, j] == 1):
+                feature += [getContext(shape, i, j)]
+    distinct_feature=[]
+    for id in feature:
+        if id not in distinct_feature:
+            distinct_feature.append(id)
+    feature=distinct_feature
+    print(len(feature))
     plt.imshow(corner),plt.show()
     # np.savetxt("./corner.csv",corner, delimiter=',')
