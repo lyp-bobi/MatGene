@@ -72,7 +72,7 @@ for i in range(datanum):
         imgs.append(np.mat(gray)[68:1003, 187:1439].copy())#for binary
 mat=np.zeros((datanum,datanum))
 starttime=time.time()
-
+features=[]
 for id in range(datanum):
     time.sleep(1)
     kernel=np.array([[0, 0, 0, 0, 0],
@@ -86,7 +86,7 @@ for id in range(datanum):
     # print(lap)
     ret, shape=cv2.threshold(lap,5,255, cv2.THRESH_BINARY_INV)
     # print(shape)
-    plt.imshow(shape),plt.title("shape1"),plt.show()
+    # plt.imshow(shape),plt.title("shape1"),plt.show()
     # np.savetxt("./shape.csv", shape, delimiter=',')
     # print(shape)
     for i in range(len(shape)):
@@ -98,7 +98,7 @@ for id in range(datanum):
 
     # print(shape)
 
-    plt.imshow(shape),plt.title("shape2"),plt.show()
+    # plt.imshow(shape),plt.title("shape2"),plt.show()
     np.savetxt("./shape.csv",shape, delimiter=',')
     harris=cv2.cornerHarris(shape, 5, 11, 0.04)
     max = harris.max()
@@ -110,6 +110,14 @@ for id in range(datanum):
         for j in range(len(shape[0])):
             if (corner[i, j] == 1):
                 feature.add(getContext(shape, i, j))
+    features.append(feature)
     print(len(feature))
-    plt.imshow(corner),plt.show()
+    # plt.imshow(corner),plt.show()
     # np.savetxt("./corner.csv",corner, delimiter=',')
+
+mat=np.zeros((datanum,datanum))
+for i in range(datanum):
+    for j in range(datanum):
+        mat[i][j]=len(features[i]^features[j])
+
+np.savetxt("./distMat.csv",mat, delimiter=',')

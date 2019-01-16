@@ -14,7 +14,7 @@ thres=mylist[int(mylist.size/20)]
 #agglomerative with complete linkage seems to be the best one
 
 #y=sklearn.cluster.DBSCAN(eps=thres,min_samples=30,metric='precomputed').fit(distMat)
-y=sklearn.cluster.AgglomerativeClustering(n_clusters=100,affinity='precomputed',linkage="complete").fit(distMat)
+y=sklearn.cluster.AgglomerativeClustering(n_clusters=min(int(distMat.shape[0]/5),50),affinity='precomputed',linkage="complete").fit(distMat)
 #y=sklearn.cluster.AffinityPropagation(affinity='precomputed').fit(distMat)
 print(y.labels_)
 

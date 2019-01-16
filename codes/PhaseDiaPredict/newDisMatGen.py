@@ -50,4 +50,4 @@ for m in range(datanum):#-1 stand for the index.txt
     if m%100==0:
         np.savetxt("./distMat.csv",mat[0:m,0:m], delimiter=',')
 print(mat)
-np.savetxt("./distMat.csv",mat[0:m,0:m], delimiter=',')
+np.savetxt("./distMat.csv",mat, delimiter=',')
