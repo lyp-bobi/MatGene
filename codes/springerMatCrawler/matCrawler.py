@@ -3,8 +3,8 @@ import urllib.request
 import random
 from matParser import searchParser,resultParser
 
-startPoint=103 #页码开始
-nop = 1965 #页码结束
+startPoint=1 #页码开始
+nop = 2069 #页码结束
 
 
 if __name__ == '__main__':
